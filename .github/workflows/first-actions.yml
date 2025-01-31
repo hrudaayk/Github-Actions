@@ -26,3 +26,18 @@ jobs:
       run: |
         cd src
         python -m pytest addition.py
+        
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v2
+
+    - name: Deploy to k8s
+      uses: stefanzweifel/k8s-action@v2.0.0
+      with:
+        args: apply -f kubernetes/
+      env:
+        KUBECONFIG: ${{ env.KUBECONFIG }}
